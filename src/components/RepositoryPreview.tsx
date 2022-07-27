@@ -31,6 +31,11 @@ const Title = styled.h4`
     background-color: #2C1B47;
   };
 `;
+const HelperText = styled.span`
+  display: block;
+  font-size: 9px;
+  text-transform: uppercase;
+`;
 
 
 function RepositoryPreview({ repo }: { repo: IRepoPreview}) {
@@ -39,8 +44,11 @@ function RepositoryPreview({ repo }: { repo: IRepoPreview}) {
     <Card>
       <Title onClick={() => navigate(`${repo.owner.login}/${repo.name}`)}>{repo.name}</Title>
       <StarsBadge>{repo.stargazers_count}</StarsBadge>
-      <i>Last updated: {repo.updated_at}</i>
-      <GitHubButton href={repo.html_url}>
+      <div>
+        <HelperText>Last update</HelperText>
+        {repo.updated_at.split('T').join(' at ').slice(0, -1)}
+      </div>
+      <GitHubButton href={repo.html_url} align={'flex-end'}>
         GitHub
       </GitHubButton>
     </Card>

@@ -16,7 +16,7 @@ const Card = styled.div`
   grid-template-columns: repeat(2, 1fr);
   background-color: #724C9D;
   color: #fff;
-  width: 600px;
+  width: 650px;
   height: 500px;
   margin-top: 30px;
   border-radius: 5px;
@@ -32,6 +32,9 @@ const CardSide = styled.div`
   &:first-of-type {
     border-right: 2px dashed #fff;
   }
+  &:nth-of-type(2) {
+    justify-content: space-evenly;
+  }
 `;
 const CardImg = styled.img`
   border-radius: 50%;
@@ -39,6 +42,26 @@ const CardImg = styled.img`
   height: 120px;
   margin-bottom: 20px;
   border: 5px solid #fff;
+`;
+const Description = styled.div`
+  padding: 10px 15px;
+  background-color: #fff;
+  color: #724C9D;
+  border-radius: 15px;
+  text-align: center;
+`;
+const Badge = styled.div`
+  border: 1px solid #fff;
+  border-radius: 2px;
+  display: inline-block;
+  font-size: 12px;
+  margin-left: 7px;
+  padding: 7px;
+`;
+const HelperText = styled.span`
+  display: block;
+  font-size: 9px;
+  text-transform: uppercase;
 `;
 const boilerplateRepo = {
   name: 'unkonwn',
@@ -52,13 +75,6 @@ const boilerplateRepo = {
   language: 'unkonwn',
   description: 'unkonwn',
 };
-const Description = styled.div`
-  padding: 10px 15px;
-  background-color: #fff;
-  color: #724C9D;
-  border-radius: 15px;
-`;
-
 function DetailPage() {
   const [contributors, setContributos] = useState<string[]>([]);
   const [repo, setRepo] = useState<any>(boilerplateRepo);
@@ -75,16 +91,26 @@ function DetailPage() {
         <Card>
           <CardSide>
             <CardImg src={repo.owner.avatar_url} alt="avatar" />
-            <p>Author: {repo.owner.login}</p>
-            <GitHubButton href={repo.owner.html_url}>
+            <h3>{repo.owner.login}</h3>
+            <GitHubButton href={repo.owner.html_url} align={'center'}>
               GitHub
             </GitHubButton>
           </CardSide>
           <CardSide>
-            <h4>Repository name: {repo.name}</h4>
+            <h3>{repo.name}</h3>
             <StarsBadge>{repo.stargazers_count}</StarsBadge>
-            <i>Last updated: {repo.updated_at}</i>
-            <p>Languages: {repo.language}</p>
+            <div>
+              <HelperText>Last update</HelperText>
+              {repo.updated_at.split('T').join(' at ').slice(0, -1)}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', alignSelf: 'flex-start' }}>
+              Languages: 
+              <Badge>
+                {repo.language
+                  ? repo.language
+                  : 'No languages were specified'}
+              </Badge>
+            </div>            
             <Description>
               <p style={{
                 textAlign: 'center',
@@ -93,7 +119,9 @@ function DetailPage() {
               }}>
                 Description
               </p>
-              {repo.description}
+              {repo.description 
+                ? repo.description
+                : 'No description was provided to this repoistory'}
             </Description>
           </CardSide>
         </Card>

@@ -12,7 +12,6 @@ const Button = styled.a`
   color: #724C9D;
   width: 70px;
   border-radius: 5px;
-  align-self: flex-end;
   font-size: 14px;
   font-weight: bold;
   transition: all 0.3s cubic-bezier(.25,.8,.25,1);
@@ -22,10 +21,15 @@ const Button = styled.a`
     color: #fff;
   };
 `;
+interface GitHubButtonProps {
+  children: string;
+  href: string;
+  align: string;
+}
 
-function GitHubButton({ children, href }: { children: string, href: string }) {
+function GitHubButton({ children, href, align }: GitHubButtonProps) {
   return (
-    <Button href={href}>
+    <Button href={href} style={{ alignSelf: align }}>
       <GitHubIcon />
       {children}
     </Button>

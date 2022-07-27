@@ -4,7 +4,6 @@ import { Container } from '../components/Container';
 import Pagination from '../components/Pagination';
 import RepositoryPreview from '../components/RepositoryPreview';
 import SearchForm from '../components/SearchForm';
-import { IRepoPreview } from '../types/RepoTypes';
 
 const ReposContainer = styled.div`
   display: grid;
@@ -12,7 +11,8 @@ const ReposContainer = styled.div`
   grid-gap: 25px 50px;
 `;
 
-const LIMIT: number = 10;
+const PAGES_LIMIT = 100;
+const PER_PAGE_LIMIT = 10;
 
 function MainPage() {
   const [repositories, setRepositories] = useState<any[]>([]);
@@ -20,23 +20,21 @@ function MainPage() {
   const [pages, setPages] = useState<number>(0);
 
   const handleResponse = (repos: any[], totalRepos: number, empty?: boolean) => {
+    totalRepos = totalRepos > PAGES_LIMIT ? PAGES_LIMIT : totalRepos;
     console.log('handled response')
     setRepositories(repos);
     if (empty) setPages(1)
-    else setPages(Math.ceil(totalRepos / 10));
-  }
+    else setPages(Math.ceil(totalRepos / 10))
+  };
 
   return (
     <main>
       <Container>
-        <SearchForm page={page} limit={LIMIT} handleResponse={handleResponse} />
+        <SearchForm page={page} setPage={setPage} limit={PER_PAGE_LIMIT} handleResponse={handleResponse} />
         <ReposContainer>
           {repositories.map((repo, i) => <RepositoryPreview key={i} repo={repo} />)}
         </ReposContainer>
-        {pages
-          ? <Pagination length={pages} page={page} />
-          : <></>
-        }
+        <Pagination length={pages} page={page} setPage={setPage}/>
       </Container>
     </main>
   );

@@ -24,7 +24,7 @@ const Title = styled.span`
 
   > * {
     margin-right: 10px;
-  }
+  };
 `;
 
 function Navbar() {

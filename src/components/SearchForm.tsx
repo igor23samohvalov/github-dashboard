@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import debounce from 'lodash/debounce';
 import axios from 'axios';
 import { routeByName, routeDefault } from '../routing';
@@ -18,38 +18,48 @@ interface ISearchForm {
   page: number;
   limit: number;
   handleResponse: any;
+  setPage: any;
 };
 
-function SearchForm({ page, limit, handleResponse }: ISearchForm) {
+function SearchForm({ page, limit, handleResponse, setPage }: ISearchForm) {
+  const [searchValue, setSearchValue] = useState<string>('');
+
 
   useEffect(() => {
     axios.get(routeDefault(limit))
       .then((res) => res.data)
       .then((data) => handleResponse(data.items, data.total_count, true))
   }, []);
+  useEffect(() => {
+    handleSearch(searchValue, page);
+  }, [page]);
+  useEffect(() => {
+    setPage(1);
+    handleSearch(searchValue, page);
+  }, [searchValue])
 
-  const handleSearch = useCallback(
-    debounce(async (value: string) => {
-      const isEmpty = value.length === 0;
+  const handleSearch = useCallback(debounce(async (value: string, page: number) => {
+    const isEmpty = value.length === 0;
 
-      const query: string = isEmpty 
-        ? routeDefault(limit)
-        : routeByName(value, limit, page);
+    const query: string = isEmpty 
+      ? routeDefault(limit)
+      : routeByName(value, limit, page);
 
-      const res = await axios.get(query);
-      const data = await res.data;
-      handleResponse(data.items, data.total_count, isEmpty);
-    }, 500),
-    []
-  )
+    const res = await axios.get(query);
+    const data = await res.data;
 
-  const handleInput:React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    handleSearch(e.target.value);
-  }
+    handleResponse(data.items, data.total_count, isEmpty);
+  }, 500), []);
+
 
   return (
     <Form>
-      <Input type="search" onChange={handleInput} placeholder="Repository Name"/>
+      <Input
+        type="search"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        placeholder="Repository Name"
+      />
     </Form>
   )
 }
