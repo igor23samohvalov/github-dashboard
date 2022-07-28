@@ -1,8 +1,10 @@
-import React from 'react'
+import { Container } from "../components/Container"
 
 function Page404() {
   return (
-    <div>Page404</div>
+    <Container>
+      <h3>403: Seems like requests limit is out. Wait a minute and try again.</h3>
+    </Container>
   )
 }
 
