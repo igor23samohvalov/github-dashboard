@@ -5,13 +5,17 @@ const StarsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: fit-content;
   padding: 5px 10px;
   margin-bottom: 10px;
   border: 1.5px solid #fff;
   border-radius: 5px;
-  width: 60px;
   font-size: 12px;
   font-weight: bold;
+
+  svg {
+    margin-right: 7px;
+  }
 `;
 
 function StarsBadge({ children }: { children: number }) {
