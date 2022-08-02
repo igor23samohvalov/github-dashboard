@@ -12,6 +12,7 @@ interface ISearchForm {
   handleResponse: any;
   setPage: any;
   setLoading: any;
+  defaultValue: string;
 };
 
 function SearchForm({
@@ -19,29 +20,29 @@ function SearchForm({
   limit,
   handleResponse,
   setPage,
-  setLoading
+  setLoading,
+  defaultValue
 }: ISearchForm) {
   const [searchValue, setSearchValue] = useState<string>('');
   const navigate = useNavigate();
 
-
+  useEffect(() => {
+    setSearchValue(defaultValue);
+  }, [defaultValue])
   useEffect(() => {
     if (searchValue) {
-      console.log('page is changed')
       handleSearch(searchValue, page);
     }
   }, [page]);
-  useEffect(() => {
 
-    console.log('serach input value is changed')
+  const handleChange:React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setSearchValue(e.target.value);
     setPage(1);
-    handleSearch(searchValue, page);
-
-  }, [searchValue]);
-
+    handleSearch(e.target.value, page);
+  };
   const handleSearch = useCallback(debounce(async (value: string, page: number) => {
     setLoading(true);
-    
+
     try {
       const isEmpty = value.length === 0;
       const query: string = isEmpty 
@@ -50,6 +51,7 @@ function SearchForm({
 
       const res = await axios.get(query);
       const data = await res.data;
+      localStorage.setItem('lastQuery', JSON.stringify({ value, page }));
       handleResponse(data.items, data.total_count, isEmpty);
     } catch (e) {
       navigate('404');
@@ -63,7 +65,7 @@ function SearchForm({
       <Input
         type="search"
         value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
+        onChange={handleChange}
         placeholder="Repository Name"
       />
     </Form>
